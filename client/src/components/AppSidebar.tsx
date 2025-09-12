@@ -1,4 +1,4 @@
-import { Home, BookOpen, Trophy, BarChart3, Settings, MessageSquare, Sparkles } from "lucide-react";
+import { Home, BookOpen, Trophy, BarChart3, Settings, MessageSquare, Sparkles, Info } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   Sidebar,
@@ -49,6 +49,11 @@ const bottomItems = [
     title: "AI Assistant",
     url: "/chat",
     icon: MessageSquare,
+  },
+  {
+    title: "About",
+    url: "/about",
+    icon: Info,
   },
   {
     title: "Settings",

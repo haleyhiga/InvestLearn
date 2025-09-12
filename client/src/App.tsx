@@ -15,6 +15,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import Dashboard from "@/pages/Dashboard";
 import Modules from "@/pages/Modules";
 import AIQuizGenerator from "@/pages/AIQuizGenerator";
+import About from "@/pages/About";
 import NotFound from "@/pages/NotFound";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -96,6 +97,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/modules" component={Modules} />
       <Route path="/ai-quiz" component={AIQuizGenerator} />
+      <Route path="/about" component={About} />
       {/* Placeholder routes for sidebar items */}
       <Route path="/achievements" component={() => <div className="p-8"><h1 className="text-2xl font-bold">Achievements - Coming Soon</h1></div>} />
       <Route path="/progress" component={() => <div className="p-8"><h1 className="text-2xl font-bold">Progress Analytics - Coming Soon</h1></div>} />
