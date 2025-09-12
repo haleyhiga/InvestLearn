@@ -29,20 +29,41 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is already logged in
-    const token = localStorage.getItem("auth_token");
-    const userData = localStorage.getItem("user_data");
-    
-    if (token && userData) {
+    const validateSession = async () => {
+      const token = localStorage.getItem("auth_token");
+      
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        setUser(JSON.parse(userData));
+        // Validate token with server
+        const response = await fetch("/api/auth/me", {
+          headers: {
+            "Authorization": `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const { user } = await response.json();
+          setUser(user);
+          localStorage.setItem("user_data", JSON.stringify(user));
+        } else {
+          // Invalid token, clean up
+          localStorage.removeItem("auth_token");
+          localStorage.removeItem("user_data");
+        }
       } catch (error) {
-        console.error("Error parsing user data:", error);
+        console.error("Session validation error:", error);
         localStorage.removeItem("auth_token");
         localStorage.removeItem("user_data");
       }
-    }
-    setIsLoading(false);
+      
+      setIsLoading(false);
+    };
+
+    validateSession();
   }, []);
 
   const login = async (email: string, password: string) => {

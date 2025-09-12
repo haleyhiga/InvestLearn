@@ -63,9 +63,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Hash password
       const hashedPassword = await bcrypt.hash(validatedData.password, 10);
       
-      // Create user (password is not stored in our schema, just used for auth)
+      // Create user with hashed password
       const userData = {
         email: validatedData.email,
+        passwordHash: hashedPassword,
         fullName: validatedData.fullName,
         avatarUrl: validatedData.avatarUrl,
       };
@@ -97,8 +98,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      // For demo purposes, accept any password for existing users
-      // In real implementation, you'd verify the hashed password
+      // Verify password
+      const isPasswordValid = await bcrypt.compare(validatedData.password, user.passwordHash);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
       
       // Generate JWT token
       const token = jwt.sign({ userId: user.id, email: user.email }, JWT_SECRET, {
@@ -112,6 +116,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid input data", errors: error.errors });
       }
       res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Session validation endpoint
+  app.get("/api/auth/me", authenticateToken, async (req, res) => {
+    try {
+      const user = await storage.getUser(req.user.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.json({ user });
+    } catch (error) {
+      console.error("Profile fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch profile" });
     }
   });
 

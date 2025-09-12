@@ -24,7 +24,7 @@ export interface IStorage {
   // User methods
   getUser(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  createUser(user: InsertUser & { passwordHash: string }): Promise<User>;
   updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined>;
 
   // Learning module methods
@@ -60,7 +60,7 @@ export class DatabaseStorage implements IStorage {
     return result[0];
   }
 
-  async createUser(user: InsertUser): Promise<User> {
+  async createUser(user: InsertUser & { passwordHash: string }): Promise<User> {
     const id = randomUUID();
     const newUser = { 
       ...user, 
