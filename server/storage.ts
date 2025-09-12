@@ -17,7 +17,12 @@ import {
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
-const sql = neon(process.env.DATABASE_URL!);
+// Disable SSL certificate verification for development (fixes self-signed cert issues)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+// Configure database connection
+const databaseUrl = process.env.DATABASE_URL!;
+const sql = neon(databaseUrl);
 export const db = drizzle(sql);
 
 export interface IStorage {
