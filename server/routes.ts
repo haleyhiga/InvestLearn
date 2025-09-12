@@ -122,6 +122,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Session validation endpoint
   app.get("/api/auth/me", authenticateToken, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
       const user = await storage.getUser(req.user.userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -136,6 +139,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Protected routes
   app.get("/api/user/profile", authenticateToken, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
       const user = await storage.getUser(req.user.userId);
       if (!user) {
         return res.status(404).json({ message: "User not found" });
@@ -149,6 +155,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/user/stats", authenticateToken, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
       const stats = await storage.getUserStats(req.user.userId);
       res.json({ stats });
     } catch (error) {
@@ -170,6 +179,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/user/progress", authenticateToken, async (req, res) => {
     try {
+      if (!req.user) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
       const progress = await storage.getUserProgress(req.user.userId);
       res.json({ progress });
     } catch (error) {
