@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User } from "@shared/schema";
+import { apiCall } from "@/lib/api";
 
 interface AuthContextType {
   user: User | null;
@@ -39,11 +40,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       try {
         // Validate token with server
-        const response = await fetch("/api/auth/me", {
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
+        const response = await apiCall("/api/auth/me");
 
         if (response.ok) {
           const { user } = await response.json();
@@ -69,11 +66,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await apiCall("/api/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ email, password }),
       });
 
@@ -98,11 +92,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const register = async (email: string, password: string, fullName?: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await apiCall("/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ email, password, fullName }),
       });
 
