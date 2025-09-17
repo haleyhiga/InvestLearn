@@ -3,7 +3,7 @@
   command = "npm run build:frontend"
   
   # Directory to publish
-  publish = "dist"
+  publish = "dist/public"
   
   # Functions directory (for serverless functions if needed)
   functions = "netlify/functions"
