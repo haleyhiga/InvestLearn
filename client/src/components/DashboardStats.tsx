@@ -15,7 +15,7 @@ interface DashboardStatsProps {
 }
 
 export default function DashboardStats({ stats }: DashboardStatsProps) {
-  const completionRate = Math.round((stats.modulesCompleted / stats.totalModules) * 100);
+  const completionRate = stats.totalModules > 0 ? Math.round((stats.modulesCompleted / stats.totalModules) * 100) : 0;
   
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

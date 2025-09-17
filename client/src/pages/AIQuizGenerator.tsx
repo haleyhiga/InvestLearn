@@ -57,17 +57,68 @@ export default function AIQuizGenerator() {
     
     setIsGenerating(true);
     
-    // Simulate AI generation - todo: remove mock functionality and integrate OpenAI
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/quiz/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+        },
+        body: JSON.stringify({
+          topic,
+          difficulty,
+          questionCount: questionCount[0],
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setGeneratedQuiz(data.questions);
+      } else {
+        console.error('Failed to generate quiz');
+        // Fallback to mock data if API fails
+        setGeneratedQuiz(mockGeneratedQuiz.slice(0, questionCount[0]));
+      }
+    } catch (error) {
+      console.error('Error generating quiz:', error);
+      // Fallback to mock data if API fails
       setGeneratedQuiz(mockGeneratedQuiz.slice(0, questionCount[0]));
+    } finally {
       setIsGenerating(false);
-    }, 3000);
+    }
   };
 
-  const handleQuizComplete = (results: { correct: number; total: number; answers: Record<string, string> }) => {
+  const handleQuizComplete = async (results: { correct: number; total: number; answers: Record<string, string> }) => {
     console.log('Quiz results:', results);
+    
+    try {
+      // Save quiz results to backend
+      const response = await fetch('/api/quiz/results', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+        },
+        body: JSON.stringify({
+          topic,
+          difficulty,
+          score: Math.round((results.correct / results.total) * 100),
+          totalQuestions: results.total,
+          correctAnswers: results.correct,
+          answers: results.answers,
+        }),
+      });
+
+      if (response.ok) {
+        console.log('Quiz results saved successfully');
+      } else {
+        console.error('Failed to save quiz results');
+      }
+    } catch (error) {
+      console.error('Error saving quiz results:', error);
+    }
+    
     setQuizCompleted(true);
-    // todo: remove mock functionality - save results and provide recommendations
   };
 
   const handleStartNew = () => {

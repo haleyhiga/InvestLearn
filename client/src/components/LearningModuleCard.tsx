@@ -8,7 +8,7 @@ export interface LearningModuleData {
   id: string;
   title: string;
   description: string;
-  topic: 'stocks' | 'crypto' | 'interest-rates';
+  topic: string;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   progress: number;
   estimatedTime: string;
@@ -22,10 +22,27 @@ interface LearningModuleCardProps {
   onContinue: (moduleId: string) => void;
 }
 
-const topicIcons = {
+const topicIcons: Record<string, any> = {
   stocks: TrendingUp,
   crypto: Coins,
   'interest-rates': Percent,
+  'personal-finance': TrendingUp,
+  'budgeting': TrendingUp,
+  'savings': Coins,
+  'credit': Percent,
+  'retirement': TrendingUp,
+  'stock-analysis': TrendingUp,
+  'bonds': Percent,
+  'real-estate': TrendingUp,
+  'risk-management': TrendingUp,
+  'tax-planning': Percent,
+  'options': TrendingUp,
+  'derivatives': TrendingUp,
+  'quantitative': TrendingUp,
+  'alternatives': TrendingUp,
+  'optimization': TrendingUp,
+  // Default fallback
+  default: TrendingUp,
 };
 
 const difficultyColors = {
@@ -35,7 +52,7 @@ const difficultyColors = {
 };
 
 export default function LearningModuleCard({ module, onStart, onContinue }: LearningModuleCardProps) {
-  const IconComponent = topicIcons[module.topic];
+  const IconComponent = topicIcons[module.topic] || topicIcons.default;
   
   return (
     <Card className="hover-elevate transition-all duration-200" data-testid={`card-module-${module.id}`}>

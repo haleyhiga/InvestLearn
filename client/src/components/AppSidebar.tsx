@@ -1,4 +1,4 @@
-import { Home, BookOpen, Trophy, BarChart3, Settings, MessageSquare, Sparkles, Info } from "lucide-react";
+import { Home, BookOpen, Trophy, BarChart3, Settings, MessageSquare, Sparkles, Info, LogOut } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import {
   Sidebar,
@@ -13,6 +13,7 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
 
 const menuItems = [
   {
@@ -64,6 +65,13 @@ const bottomItems = [
 
 export default function AppSidebar() {
   const [location] = useLocation();
+  const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    // Redirect to login page or home page after logout
+    window.location.href = '/';
+  };
 
   return (
     <Sidebar data-testid="sidebar-main">
@@ -126,6 +134,18 @@ export default function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {user && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton 
+                    onClick={handleLogout}
+                    data-testid="button-logout"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:text-red-300 dark:hover:bg-red-950"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Logout</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -1,60 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LearningModuleCard, { type LearningModuleData } from "@/components/LearningModuleCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, TrendingUp, Coins, Percent } from "lucide-react";
+import { Search, Filter, TrendingUp, Coins, Percent, BookOpen } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
-// Mock data - todo: remove mock functionality
-const mockModules: LearningModuleData[] = [
-  {
-    id: '1',
-    title: 'Stock Market Fundamentals',
-    description: 'Learn the basics of stock market investing, including how to read financial statements and evaluate companies.',
-    topic: 'stocks',
-    difficulty: 'beginner',
-    progress: 100,
-    estimatedTime: '45 min',
-    rating: 4.8,
-    completed: true,
-  },
-  {
-    id: '2',
-    title: 'Technical Analysis Basics',
-    description: 'Understand chart patterns, indicators, and technical analysis tools for better trading decisions.',
-    topic: 'stocks',
-    difficulty: 'intermediate',
-    progress: 65,
-    estimatedTime: '60 min',
-    rating: 4.6,
-    completed: false,
-  },
-  {
-    id: '3',
-    title: 'Cryptocurrency Introduction',
-    description: 'Explore the world of digital currencies, blockchain technology, and crypto investment strategies.',
-    topic: 'crypto',
-    difficulty: 'beginner',
-    progress: 0,
-    estimatedTime: '40 min',
-    rating: 4.7,
-    completed: false,
-  },
-  {
-    id: '4',
-    title: 'DeFi and Yield Farming',
-    description: 'Advanced concepts in decentralized finance, liquidity pools, and earning yield on crypto assets.',
-    topic: 'crypto',
-    difficulty: 'advanced',
-    progress: 30,
-    estimatedTime: '75 min',
-    rating: 4.9,
-    completed: false,
-  },
-  {
-    id: '5',
-    title: 'Interest Rates & Bonds',
+interface LearningModule {
+  id: string;
+  title: string;
+  description: string;
+  topic: string;
+  difficulty: string;
+  estimatedTime: string;
+  content: any;
+  progress?: number;
+  completed?: boolean;
+}
     description: 'Master how interest rates affect investments and learn about bond fundamentals and strategies.',
     topic: 'interest-rates',
     difficulty: 'intermediate',
@@ -91,11 +54,38 @@ const difficultyFilters = [
 ];
 
 export default function Modules() {
+  const { isAuthenticated } = useAuth();
+  const [modules, setModules] = useState<LearningModule[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [topicFilter, setTopicFilter] = useState("all");
   const [difficultyFilter, setDifficultyFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadModules();
+    }
+  }, [isAuthenticated]);
+
+  const loadModules = async () => {
+    try {
+      const response = await fetch('/api/modules', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setModules(data.modules || []);
+      }
+    } catch (error) {
+      console.error('Failed to load modules:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   
-  const filteredModules = mockModules.filter(module => {
+  const filteredModules = modules.filter(module => {
     const matchesSearch = module.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          module.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesTopic = topicFilter === 'all' || module.topic === topicFilter;
@@ -201,28 +191,45 @@ export default function Modules() {
         </div>
         
         <div className="grid gap-4 lg:grid-cols-2">
-          {filteredModules.map((module) => (
-            <LearningModuleCard
-              key={module.id}
-              module={module}
-              onStart={handleStartModule}
-              onContinue={handleContinueModule}
-            />
-          ))}
-        </div>
-        
-        {filteredModules.length === 0 && (
-          <Card className="text-center py-8" data-testid="card-no-results">
-            <CardContent>
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold">No modules found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your search or filter criteria
-                </p>
+          {loading ? (
+            <div className="col-span-2 flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading modules...</p>
               </div>
-            </CardContent>
-          </Card>
-        )}
+            </div>
+          ) : filteredModules.length > 0 ? (
+            filteredModules.map((module) => (
+              <LearningModuleCard
+                key={module.id}
+                module={{
+                  id: module.id,
+                  title: module.title,
+                  description: module.description,
+                  topic: module.topic,
+                  difficulty: module.difficulty,
+                  progress: module.progress || 0,
+                  estimatedTime: module.estimatedTime,
+                  rating: 4.5, // Default rating
+                  completed: module.completed || false,
+                }}
+                onStart={handleStartModule}
+                onContinue={handleContinueModule}
+              />
+            ))
+          ) : (
+            <div className="col-span-2 text-center py-12">
+              <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No modules found</h3>
+              <p className="text-muted-foreground">
+                {searchQuery || topicFilter !== 'all' || difficultyFilter !== 'all' 
+                  ? 'Try adjusting your search or filter criteria'
+                  : 'No modules available. Load some modules to get started!'
+                }
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

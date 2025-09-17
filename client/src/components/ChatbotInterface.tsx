@@ -32,7 +32,7 @@ export default function ChatbotInterface({
     {
       id: '1',
       type: 'bot',
-      content: "Hi! I'm your AI learning assistant. I can help explain investment concepts, answer questions about the modules, or provide additional context. What would you like to learn about?",
+      content: "Hi! I'm your AI financial advisor assistant. I can help you understand investment concepts, personal finance strategies, budgeting, retirement planning, and answer any money-related questions you have. What financial topic would you like to explore today?",
       timestamp: new Date(),
     },
   ]);
@@ -50,20 +50,56 @@ export default function ChatbotInterface({
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = input;
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response //todo: remove mock functionality
-    setTimeout(() => {
+    try {
+      // Prepare conversation history for API
+      const conversationHistory = messages.map(msg => ({
+        role: msg.type === 'user' ? 'user' : 'assistant',
+        content: msg.content,
+      }));
+
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+        },
+        body: JSON.stringify({
+          message: currentInput,
+          conversationHistory,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || 'Failed to get response from chatbot');
+      }
+
+      const data = await response.json();
+      
       const botResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'bot',
-        content: `I understand you're asking about "${input}". This is a great question! In investment terms, this relates to fundamental analysis principles. Would you like me to explain the key concepts or direct you to a specific learning module that covers this topic?`,
+        content: data.response,
         timestamp: new Date(),
       };
+      
       setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      console.error('Chat error:', error);
+      const errorResponse: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'bot',
+        content: "I'm sorry, I'm having trouble connecting right now. Please try again in a moment.",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsTyping(false);
-    }, 2000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -215,7 +251,7 @@ export default function ChatbotInterface({
         <div className="p-4 border-t">
           <div className="flex gap-2">
             <Input
-              placeholder="Ask me anything about investing..."
+              placeholder="Ask me about budgeting, investing, retirement planning..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyPress={handleKeyPress}

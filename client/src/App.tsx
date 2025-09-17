@@ -13,8 +13,11 @@ import AppSidebar from "@/components/AppSidebar";
 import ChatbotInterface from "@/components/ChatbotInterface";
 import ThemeToggle from "@/components/ThemeToggle";
 import Dashboard from "@/pages/Dashboard";
-import Modules from "@/pages/Modules";
+import Modules from "@/pages/ModulesEnhanced";
 import AIQuizGenerator from "@/pages/AIQuizGenerator";
+import Chat from "@/pages/Chat";
+import Achievements from "@/pages/Achievements";
+import ProgressPage from "@/pages/Progress";
 import About from "@/pages/About";
 import NotFound from "@/pages/NotFound";
 
@@ -98,10 +101,10 @@ function Router() {
       <Route path="/modules" component={Modules} />
       <Route path="/ai-quiz" component={AIQuizGenerator} />
       <Route path="/about" component={About} />
+      <Route path="/chat" component={Chat} />
+      <Route path="/achievements" component={Achievements} />
+      <Route path="/progress" component={ProgressPage} />
       {/* Placeholder routes for sidebar items */}
-      <Route path="/achievements" component={() => <div className="p-8"><h1 className="text-2xl font-bold">Achievements - Coming Soon</h1></div>} />
-      <Route path="/progress" component={() => <div className="p-8"><h1 className="text-2xl font-bold">Progress Analytics - Coming Soon</h1></div>} />
-      <Route path="/chat" component={() => <div className="p-8"><h1 className="text-2xl font-bold">AI Chat - Use the floating button!</h1></div>} />
       <Route path="/settings" component={() => <div className="p-8"><h1 className="text-2xl font-bold">Settings - Coming Soon</h1></div>} />
       <Route component={NotFound} />
     </Switch>

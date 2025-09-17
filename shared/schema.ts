@@ -7,7 +7,7 @@ import { z } from "zod";
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: text("email").notNull().unique(),
-  passwordHash: text("password_hash").notNull(),
+  passwordHash: text("password_hash").notNull().$type<string>(),
   fullName: text("full_name"),
   avatarUrl: text("avatar_url"),
   createdAt: timestamp("created_at").notNull().default(sql`now()`),
