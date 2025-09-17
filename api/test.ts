@@ -1,11 +1,9 @@
-// Vercel serverless function for test endpoint
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  res.status(200).json({
+  res.status(200).json({ 
     message: 'API is working!',
-    timestamp: new Date().toISOString(),
-    method: req.method,
-    path: req.url
+    endpoint: '/api/test',
+    method: req.method
   });
 }

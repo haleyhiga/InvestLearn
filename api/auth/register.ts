@@ -1,25 +1,20 @@
-// Vercel serverless function for user registration
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  try {
-    const { email, password, fullName } = req.body;
+  const { email, password, fullName } = req.body;
 
-    // For now, just return success without database
-    res.status(201).json({
-      message: 'Registration endpoint is working!',
-      user: {
-        email,
-        fullName,
-        id: 'temp-id'
-      },
-      token: 'temp-token'
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Registration failed' });
+  if (!email || !password || !fullName) {
+    return res.status(400).json({ error: 'Email, password, and full name are required' });
   }
+
+  // For now, just return a mock response
+  res.status(201).json({
+    message: 'Registration endpoint working',
+    user: { email, fullName },
+    timestamp: new Date().toISOString()
+  });
 }
