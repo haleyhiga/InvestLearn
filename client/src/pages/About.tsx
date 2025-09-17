@@ -5,6 +5,9 @@ import { BookOpen, Brain, TrendingUp, Users, Shield, Zap } from "lucide-react";
 export default function About() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
+
+
+      
       {/* Header Section */}
       <div className="text-center space-y-4">
         <div className="flex justify-center">
@@ -18,6 +21,35 @@ export default function About() {
           with personalized education and interactive quizzes.
         </p>
       </div>
+
+       {/* Creator Information */}
+       <Card data-testid="card-creator">
+        <CardHeader>
+          <CardTitle className="text-center">App Published by</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center space-y-4">
+              <div className="mx-auto w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
+                <img src="/snowboard.png" alt="Haley Higa" className="h-24 w-24 rounded-full object-cover" />
+              </div>
+            <div className="space-y-2">
+              <h3 className="text-2xl font-bold">Haley Higa</h3>
+              <p className="text-lg text-muted-foreground">Full-Stack Developer & Financial Education Enthusiast</p>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Passionate about creating accessible educational tools that empower individuals to take control 
+                of their financial future. InvestLearn represents the intersection of technology, education, 
+                and financial literacy.  Recent graduate of Utah Tech University with a Bachelor of Science in Computer Science.  Loves to code, snowboard, and surf in her free time.  Learn more about Haley on her website haleyhiga.com.
+              </p>
+            </div>
+            <div className="flex justify-center gap-4 pt-4">
+              <Badge variant="outline">React Developer</Badge>
+              <Badge variant="outline">TypeScript</Badge>
+              <Badge variant="outline">AI Integration</Badge>
+              <Badge variant="outline">Financial Education</Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Mission Section */}
       <Card data-testid="card-mission">
@@ -121,7 +153,7 @@ export default function About() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Users className="h-5 w-5 text-primary" />
-            Join Our Community
+            Join Our Community (Coming Soon)
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -137,6 +169,8 @@ export default function About() {
           </div>
         </CardContent>
       </Card>
+
+     
     </div>
   );
 }
