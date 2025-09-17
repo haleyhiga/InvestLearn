@@ -1,5 +1,5 @@
 // API utility functions
-const API_BASE_URL = import.meta.env.VITE_API_URL || '';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://invest-learn-c08kv5erl-haleyhigas-projects.vercel.app';
 
 export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
