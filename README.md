@@ -16,16 +16,17 @@ A comprehensive learning platform that helps users master investment concepts th
 
 - **Frontend**: React, TypeScript, Tailwind CSS, Wouter
 - **Backend**: Node.js, Express, TypeScript
-- **Database**: PostgreSQL with Drizzle ORM
+- **Database**: Supabase (PostgreSQL) with Drizzle ORM
 - **AI**: OpenAI GPT-4 for chat and content generation
 - **Authentication**: JWT with bcrypt password hashing
+- **Hosting**: Supabase for database and authentication
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js (v18 or higher)
-- PostgreSQL database
+- Supabase account and project
 - OpenAI API key
 
 ### Installation
@@ -41,32 +42,67 @@ cd investlearn
 npm install
 ```
 
-3. Set up environment variables:
+3. Set up Supabase:
+   - Create a new project at [supabase.com](https://supabase.com)
+   - Go to Settings → Database to get your connection string
+   - Copy the connection string for your `.env` file
+
+4. Set up environment variables:
 ```bash
 cp .env.example .env
 ```
 
-4. Configure your `.env` file with your actual values:
+5. Configure your `.env` file with your actual values:
 ```env
-DATABASE_URL=postgresql://username:password@host:port/database
+DATABASE_URL=postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:6543/postgres
 SESSION_SECRET=your-super-secret-jwt-key-here
 OPENAI_API_KEY=your-openai-api-key-here
 PORT=5000
 NODE_ENV=development
 ```
 
-5. Set up the database:
+6. Set up the database:
 ```bash
 npm run db:generate
 npm run db:migrate
 ```
 
-6. Start the development server:
+7. Start the development server:
 ```bash
 npm run dev
 ```
 
 The application will be available at `http://localhost:5000`
+
+## Supabase Setup
+
+This application uses Supabase as the backend database. Here's how to set it up:
+
+1. **Create a Supabase Project:**
+   - Go to [supabase.com](https://supabase.com) and sign up
+   - Create a new project
+   - Choose a region close to your users
+
+2. **Get Database Connection String:**
+   - Go to Settings → Database
+   - Copy the "Connection string" under "Connection parameters"
+   - Use the "URI" format for your `DATABASE_URL`
+
+3. **Database Schema:**
+   - The application will automatically create the required tables
+   - Run `npm run db:migrate` to set up the schema
+   - Tables include: `users`, `learning_modules`, `user_progress`, `quiz_results`
+
+4. **Authentication:**
+   - This app uses custom JWT authentication (not Supabase Auth)
+   - User data is stored in the `users` table
+   - Passwords are hashed with bcrypt
+
+5. **Database Tables:**
+   - `users` - User accounts and authentication
+   - `learning_modules` - Course content and modules
+   - `user_progress` - Individual progress tracking
+   - `quiz_results` - Quiz scores and performance
 
 ## Project Structure
 
